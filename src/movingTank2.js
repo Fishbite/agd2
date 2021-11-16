@@ -11,13 +11,17 @@ import {
   text,
   circle,
   remove,
+  button,
+  buttons,
 } from "../lib/importer.js";
 
 import { contain } from "../lib/utils.js";
 
 import { keyboard, makePointer } from "../lib/interactive.js";
 
-assets.load(["../fonts/puzzler.otf"]).then(() => setup());
+assets
+  .load(["../fonts/puzzler.otf", "../images/button.png"])
+  .then(() => setup());
 
 let canvas,
   tank,
@@ -29,7 +33,13 @@ let canvas,
   msgTankSpeed,
   msgHitTest,
   bullets = [],
-  pointer;
+  pointer,
+  buttonFrames = [
+    assets["up.png"],
+    assets["over.png"],
+    assets["down.png"],
+    (playButton = button(buttonFrames, 32, 96)),
+  ];
 
 // The bullet Sprite function
 // let bulletSprite = () => circle(8, "red");
