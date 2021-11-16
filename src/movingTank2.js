@@ -55,7 +55,6 @@ function shoot(
   // set the bullets velocity
   bullet.vx = Math.cos(angle) * bulletSpeed;
   bullet.vy = Math.sin(angle) * bulletSpeed;
-  console.log(`tank.vx ${tank.vx} tank.vy: ${tank.vy}`);
 
   // push the bullet into the bullet array
   bulletArray.push(bullet);
@@ -134,7 +133,7 @@ function setup() {
     );
   };
 
-  // setup the rotation speed for the keft arrow
+  // setup the rotation speed for the left arrow
   leftArrow.press = () => {
     tank.rotationSpeed = -0.05;
   };
