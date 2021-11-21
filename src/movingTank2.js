@@ -13,14 +13,15 @@ import {
   remove,
   button,
   buttons,
+  frames,
 } from "../lib/importer.js";
 
-import { contain } from "../lib/utils.js";
+import { colours, contain, randomInt } from "../lib/utils.js";
 
-import { keyboard, makePointer } from "../lib/interactive.js";
+import { keyboard, makePointer, up } from "../lib/interactive.js";
 
 assets
-  .load(["../fonts/puzzler.otf", "../images/button.png"])
+  .load(["../fonts/puzzler.otf", "../images/button.json"])
   .then(() => setup());
 
 let canvas,
@@ -32,14 +33,13 @@ let canvas,
   msgSide,
   msgTankSpeed,
   msgHitTest,
+  stateMessage,
+  actionMessage,
+  playButton,
   bullets = [],
-  pointer,
-  buttonFrames = [
-    assets["up.png"],
-    assets["over.png"],
-    assets["down.png"],
-    (playButton = button(buttonFrames, 32, 96)),
-  ];
+  // bullet = bulletSprite(),
+  ball,
+  pointer;
 
 // The bullet Sprite function
 // let bulletSprite = () => circle(8, "red");
@@ -97,7 +97,13 @@ function setup() {
     4,
     76
   );
-  msgHitTest = text("no hit", "14px puzzler", "rgba(50, 50, 50, 1", 4, 94);
+  msgHitTest = text(
+    "pointer hit:",
+    "14px puzzler",
+    "rgba(50, 50, 50, 1",
+    4,
+    94
+  );
 
   // ****** make the tank ****** \\
   // ****** tank behaves like a real wheeled vehicle ****** \\
@@ -138,9 +144,7 @@ function setup() {
     space = keyboard(32);
 
   space.press = () => {
-    shoot(tank, tank.rotation, 32, 7, bullets, () =>
-      line("red", 8, 0, 0, 24, 0)
-    );
+    shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
   };
 
   // setup the rotation speed for the left arrow
@@ -186,6 +190,52 @@ function setup() {
   // test if the pointer touches the tank
   pointer.hitTestSprite(tank);
 
+  // ****** Interactive Button ****** \\
+  //Note: This shouldn't really be in this file!
+
+  // Define the button's frames:
+  let buttonFrames = [assets["up.png"], assets["over.png"], assets["down.png"]];
+
+  // Make the button sprite:
+  playButton = button(buttonFrames, 32, stage.height - 128);
+  console.log(playButton.height);
+
+  // define the button's actions:
+  playButton.over = () => console.log("over");
+  playButton.out = () => console.log("out");
+  playButton.press = () => console.log("press");
+  playButton.release = () => console.log("release");
+  playButton.tap = () => console.log("tap");
+
+  // Add some message text:
+  stateMessage = text("state:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 112);
+  actionMessage = text("action:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 130);
+
+  // test if the pointer hits the button so
+  // we can update the msgHitTest text content
+  pointer.hitTestSprite(playButton);
+
+  // ****** Interactive Clickable Sprites ****** \\
+  ball = circle(96, "red", "blue", 8);
+  stage.putCenter(ball, stage.halfWidth / 2, stage.halfHeight / 2);
+
+  // Make the ball interactive
+  ball.interactive = true;
+
+  // assign the ball's press method
+  ball.press = () => {
+    // An array of colours
+    let colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"];
+
+    // set the ball's fill and stroke style to a random colour
+    ball.fillStyle = colours[randomInt(0, colours.length - 1)];
+    ball.strokeStyle = colours[randomInt(0, colours.length - 1)];
+  };
+
+  // test if the pointer touches the ball
+  pointer.hitTestSprite(ball);
+  // bullet.hitTestSprite(ball);
+
   gameLoop();
 }
 
@@ -228,8 +278,12 @@ function gameLoop() {
   msgTankSpeed.content = `speed: ${Math.floor(tank.speed * 10)}`;
 
   if (pointer.hitTestSprite(tank)) {
-    msgHitTest.content = "tank";
-  } else msgHitTest.content = "nowt";
+    msgHitTest.content = "pointer hit: tank";
+  } else if (pointer.hitTestSprite(playButton)) {
+    msgHitTest.content = "pointer hit: playButton";
+  } else if (pointer.hitTestSprite(ball)) {
+    msgHitTest.content = "pointer hit: ball";
+  } else msgHitTest.content = "pointer hit: nothing";
 
   // ****** Bullets ****** \\
 
@@ -269,6 +323,23 @@ function gameLoop() {
     // keep it in the bullets array
     return true;
   });
+
+  // ****** Update the buttons / interactive sprites ****** \\
+  if (buttons.length > 0) {
+    canvas.style.cursor = "auto";
+    buttons.forEach((button) => {
+      button.update(pointer, canvas);
+      if (button.state === "over" || button.state === "down") {
+        if (button.parent !== undefined) {
+          canvas.style.cursor = "pointer";
+        }
+      }
+    });
+  }
+
+  // display the  button's state and action
+  stateMessage.content = `state: ${playButton.state}`;
+  actionMessage.content = `action: ${playButton.action}`;
 
   render(canvas);
 }
