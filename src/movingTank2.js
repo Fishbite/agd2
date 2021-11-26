@@ -14,6 +14,7 @@ import {
   button,
   buttons,
   frames,
+  draggableSprites,
 } from "../lib/importer.js";
 
 import { colours, contain, randomInt } from "../lib/utils.js";
@@ -221,6 +222,8 @@ function setup() {
 
   // Make the ball interactive
   ball.interactive = true;
+  // make it draggable
+  ball.draggable = true;
 
   // assign the ball's press method
   ball.press = () => {
@@ -268,6 +271,8 @@ function gameLoop() {
   // Apply the tank's velocity to its position to make the tank move
   tank.x += tank.vx;
   tank.y += tank.vy;
+
+  // tank.draggable = true;
 
   // contain the tank within the stage boundries
   let edges = contain(tank, stage.localBounds, true);
@@ -340,6 +345,9 @@ function gameLoop() {
   // display the  button's state and action
   stateMessage.content = `state: ${playButton.state}`;
   actionMessage.content = `action: ${playButton.action}`;
+
+  // update the pointer's drag and srop system
+  pointer.updateDragAndDrop(draggableSprites);
 
   render(canvas);
 }
