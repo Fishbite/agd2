@@ -29,18 +29,27 @@ function setup() {
   cat = sprite(assets["cat.png"]);
   cat.width = canvas.width / 5;
   cat.height = cat.width;
-  stage.putCenter(cat, -32, -32);
+  stage.putCenter(cat, 0, -32);
   cat.draggable = true;
+
+  tiger = sprite(assets["tiger.png"]);
+  tiger.width = canvas.width / 5;
+  tiger.height = tiger.width;
+  stage.putCenter(tiger, 32, 32);
+  tiger.draggable = true;
+
+  hedgehog = sprite(assets["hedgehog.png"]);
+  hedgehog.width = canvas.width / 5;
+  hedgehog.height = hedgehog.width;
+  stage.putCenter(hedgehog, -32, 32);
+  hedgehog.draggable = true;
 
   // make the pointer
   pointer = makePointer(canvas);
 
-  // test the pointer's drag and drop system
-  //   pointer.updateDragAndDrop(draggableSprites);
-
-  console.log("cat.png:", cat);
-  console.log("draggableSprites array:", draggableSprites);
-  console.log("makePointer function:", makePointer);
+  //   console.log("cat.png:", cat);
+  //   console.log("draggableSprites array:", draggableSprites);
+  //   console.log("makePointer function:", makePointer);
 
   // start the game loop
   gameLoop();
@@ -49,8 +58,8 @@ function setup() {
 function gameLoop() {
   requestAnimationFrame(gameLoop);
 
-  // update the pointer's drage & drop system
-  //   pointer.updateDragAndDrop(draggableSprites);
+  // update the pointer's drag & drop system
+  pointer.updateDragAndDrop(draggableSprites);
 
   render(canvas);
 }
