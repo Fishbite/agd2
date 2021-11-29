@@ -17,15 +17,18 @@ import {
   draggableSprites,
 } from "../lib/importer.js";
 
-import { colours, contain, randomInt } from "../lib/utils.js";
+import { contain, randomInt } from "../lib/utils.js";
 
 import { keyboard, makePointer, up } from "../lib/interactive.js";
+
+import { hit } from "../lib/collision.js";
 
 assets
   .load(["../fonts/puzzler.otf", "../images/button.json"])
   .then(() => setup());
 
 let canvas,
+  colours,
   tank,
   tankSpeed = 0,
   message,
@@ -34,12 +37,14 @@ let canvas,
   msgSide,
   msgTankSpeed,
   msgHitTest,
+  msgScore,
   stateMessage,
   actionMessage,
   playButton,
   bullets = [],
   // bullet = bulletSprite(),
   ball,
+  score = 0,
   pointer;
 
 // The bullet Sprite function
@@ -105,6 +110,8 @@ function setup() {
     4,
     94
   );
+
+  msgScore = text("score:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 146);
 
   // ****** make the tank ****** \\
   // ****** tank behaves like a real wheeled vehicle ****** \\
@@ -228,7 +235,7 @@ function setup() {
   // assign the ball's press method
   ball.press = () => {
     // An array of colours
-    let colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"];
+    colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"];
 
     // set the ball's fill and stroke style to a random colour
     ball.fillStyle = colours[randomInt(0, colours.length - 1)];
@@ -305,9 +312,23 @@ function gameLoop() {
       bullet.y += bullet.vy;
     }
 
-    // console.log(bullet.vx, bullet.vy, tank.vx);
+    // check if bullet hit ball
+
+    let hitBall = hit(ball, bullets, true, true, true);
+    if (hitBall) {
+      score++;
+      msgScore.content = `score: ${score}`;
+      // set the ball's fill and stroke style to a random colour
+      ball.fillStyle = colours[randomInt(0, colours.length - 1)];
+      ball.strokeStyle = colours[randomInt(0, colours.length - 1)];
+
+      remove(bullet);
+
+      return false;
+    }
 
     // check for collision with the stage boundary
+
     let collision = outsideBounds(bullet, stage.localBounds);
 
     // if there's a collision, display the side that the collision
