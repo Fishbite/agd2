@@ -322,6 +322,11 @@ function gameLoop() {
       ball.fillStyle = colours[randomInt(0, colours.length - 1)];
       ball.strokeStyle = colours[randomInt(0, colours.length - 1)];
 
+      // make sure the fill style and stroke style are different
+      if (ball.fillStyle === ball.strokeStyle) {
+        ball.strokeStyle = "blue";
+      }
+
       remove(bullet);
 
       return false;
