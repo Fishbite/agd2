@@ -28,7 +28,7 @@ assets
   .then(() => setup());
 
 let canvas,
-  colours,
+  colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"],
   tank,
   tankSpeed = 0,
   message,
@@ -235,7 +235,7 @@ function setup() {
   // assign the ball's press method
   ball.press = () => {
     // An array of colours
-    colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"];
+    // colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"];
 
     // set the ball's fill and stroke style to a random colour
     ball.fillStyle = colours[randomInt(0, colours.length - 1)];
@@ -314,7 +314,7 @@ function gameLoop() {
 
     // check if bullet hit ball
 
-    let hitBall = hit(ball, bullets, true, true, true);
+    let hitBall = hit(ball, bullet, true, true, true);
     if (hitBall) {
       score++;
       msgScore.content = `score: ${score}`;
