@@ -16,6 +16,8 @@ import {
 
 import { makePointer, keyboard } from "../lib/interactive.js";
 
+import { contain } from "../lib/utils.js";
+
 // states.png is a tileset of four elf images
 assets.load(["../images/states.png"]).then(() => setup());
 
@@ -23,7 +25,7 @@ assets.load(["../images/states.png"]).then(() => setup());
  ****** Vars Shared Between Functions ******
  */
 
-let canvas, elf, pointer;
+let canvas, elf, pointer, leftArrow, rightArrow, upArrow, downArrow;
 
 // ****** Set Everthing Up ****** \\
 // basically set up the sprites
@@ -63,19 +65,49 @@ function setup() {
     right: 3,
   };
 
-  // setup some keyboard keys
-  let leftArrow = keyboard(37),
-    rightArrow = keyboard(39),
-    upArrow = keyboard(38),
-    downArrow = keyboard(40),
-    space = keyboard(32);
+  // physics properties for the elf
+  elf.vx = 0;
+  elf.vy = 0;
+  elf.friction = 0.96;
 
-  // define the press function for each key
+  // setup some keyboard keys
+  leftArrow = keyboard(37);
+  rightArrow = keyboard(39);
+  upArrow = keyboard(38);
+  downArrow = keyboard(40);
+
+  // define the press method for each key
   // use gotoAndStop to display the state
-  leftArrow.press = () => elf.gotoAndStop(elf.states.left);
-  rightArrow.press = () => elf.gotoAndStop(elf.states.right);
-  upArrow.press = () => elf.gotoAndStop(elf.states.up);
-  downArrow.press = () => elf.gotoAndStop(elf.states.down);
+  leftArrow.press = () => {
+    elf.gotoAndStop(elf.states.left);
+    elf.vx = -1;
+  };
+  rightArrow.press = () => {
+    elf.gotoAndStop(elf.states.right);
+    elf.vx = 1;
+  };
+  upArrow.press = () => {
+    elf.gotoAndStop(elf.states.up);
+    elf.vy = -1;
+  };
+  downArrow.press = () => {
+    elf.gotoAndStop(elf.states.down);
+    elf.vy = 1;
+  };
+
+  leftArrow.release = () => {
+    elf.vx = 0;
+  };
+  rightArrow.release = () => {
+    elf.vx = 0;
+  };
+
+  upArrow.release = () => {
+    elf.vy = 0;
+  };
+  downArrow.release = () => {
+    elf.vy = 0;
+  };
 
   // Bonus! Not required for keyframe ani'
   // but it allows us todrag the elf around
@@ -90,6 +122,13 @@ function gameLoop() {
 
   // update the sprite's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
+
+  // move the elf
+  elf.x += elf.vx * 5;
+  elf.y += elf.vy * 5;
+
+  // contain the elf within the stage boundries
+  let edges = contain(elf, stage.localBounds);
 
   render(canvas);
 }
