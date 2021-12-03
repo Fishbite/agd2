@@ -131,6 +131,7 @@ function setup() {
 
   tank = group(leftTrack, rightTrack, box, turret, gun);
   stage.putCenter(tank);
+  tank.draggable = true;
 
   // Add some physics properties
   tank.vx = 0;
@@ -206,22 +207,24 @@ function setup() {
 
   // Make the button sprite:
   playButton = button(buttonFrames, 32, stage.height - 128);
-  console.log(playButton.height);
+  // playButton.press = () => {
+  //   shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+  // };
+  // console.log(playButton.height);
 
   // define the button's actions:
   playButton.over = () => console.log("over");
   playButton.out = () => console.log("out");
   playButton.press = () => console.log("press");
   playButton.release = () => console.log("release");
-  playButton.tap = () => console.log("tap");
+  playButton.tap = () => {
+    shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+    console.log("tap");
+  };
 
   // Add some message text:
   stateMessage = text("state:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 112);
   actionMessage = text("action:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 130);
-
-  // test if the pointer hits the button so
-  // we can update the msgHitTest text content
-  pointer.hitTestSprite(playButton);
 
   // ****** Interactive Clickable Sprites ****** \\
   ball = circle(96, "red", "blue", 8);
@@ -244,7 +247,10 @@ function setup() {
 
   // test if the pointer touches the ball
   pointer.hitTestSprite(ball);
-  // bullet.hitTestSprite(ball);
+
+  // test if the pointer hits the button so
+  // we can update the msgHitTest text content
+  pointer.hitTestSprite(playButton);
 
   gameLoop();
 }
@@ -327,6 +333,16 @@ function gameLoop() {
         ball.strokeStyle = "blue";
       }
 
+      ball.diameter *= 0.99;
+      ball.lineWidth *= 0.99;
+
+      if (ball.diameter < bullet.diameter * 2) {
+        score += 100;
+        remove(ball);
+
+        msgScore.content = `score: * WIN * ${score}`;
+      }
+
       remove(bullet);
 
       return false;
@@ -372,7 +388,7 @@ function gameLoop() {
   stateMessage.content = `state: ${playButton.state}`;
   actionMessage.content = `action: ${playButton.action}`;
 
-  // update the pointer's drag and srop system
+  // update the pointer's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
 
   render(canvas);
