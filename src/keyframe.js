@@ -1,5 +1,15 @@
 /*
- ****** Simple Keyframe Animation ******
+ ****** Simple Keyframe Use ******
+    This program uses images from a
+    tilset that diplay an elf sprite
+    in a static position.
+
+    i.e. facing up, right, left or down
+
+    See keyframeAni.js for a program that
+    uses tileset images for animation.
+
+    e.g. to animate a walking sequence
  */
 
 // ****** Import stuff we need ****** \\
@@ -64,11 +74,6 @@ function setup() {
     down: 2,
     right: 3,
   };
-
-  // physics properties for the elf
-  elf.vx = 0;
-  elf.vy = 0;
-  elf.friction = 0.96;
 
   // setup some keyboard keys
   leftArrow = keyboard(37);
