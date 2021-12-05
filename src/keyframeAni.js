@@ -135,3 +135,56 @@ function addStatePlayer(sprite) {
   sprite.stop = stop;
   sprite.playSequence = playSequence;
 }
+
+// ****** Filmstrip Function ****** \\
+/*
+    Next we need a way to create on array containing
+    all the frames as separate images. We can use the
+    frames() function to turn an array of position
+    values into an array of images, but, if we have a
+    tileset containing many frames, we don't want to
+    have to manually create an array of positions.
+
+    This custom function figures out the x/y positions
+    of each frame for us and returns all the animation
+    frames.
+
+    This function also needs to be added to importer.js
+*/
+
+export function filmstrip(image, frameWidth, frameHeight, spacing = 0) {
+  // an array to store alll the x / y positions
+  let positions = [];
+
+  // find out how many rows and columns there
+  // are in the tileset
+  let columns = image.width / frameWidth,
+    rows = image.height / frameHeight;
+
+  // find the total number of frames
+  numberOfFrames = columns * rows;
+
+  for (let i = 0; i < numberOfFrames; i++) {
+    // find the correct row and column for each frame
+    // and figure out its x / y position
+    let x = (i % columns) * frameWidth,
+      y = (i % rows) * frameHeight;
+
+    // compensate for any optional spacing around the
+    // frames. Accumulate the spacinng offsets from
+    // the left side of the tileset and add them to
+    // the current tile's position
+    if (spacing && spacing > 0) {
+      x += spacing + ((spacing * i) % columns);
+      y += spacing + spacing * Math.floor(i / columns);
+    }
+
+    // add the x / y values of each frame to the
+    // positions array
+    positions.push([x, y]);
+  }
+
+  // create and return the animation frames using
+  // the frames() function
+  return frames(image, positions, frameWidth, frameHeight);
+}
