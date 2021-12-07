@@ -260,16 +260,19 @@ function setup() {
     // play the elf's walkLeft animation sequence
     elf.playSequence(elf.states.walkLeft);
     elf.vx = -1;
+    elf.vy = 0;
     console.log(elf.states.walkLeft);
   };
   leftArrow.release = () => {
     elf.show(elf.states.left);
     elf.vx = 0;
+    elf.vy = 0;
   };
 
   rightArrow.press = () => {
     elf.playSequence(elf.states.walkRight);
     elf.vx = 1;
+    elf.vy = 0;
     console.log(elf.states.walkRight);
   };
   rightArrow.release = () => {
@@ -280,21 +283,25 @@ function setup() {
   upArrow.press = () => {
     elf.playSequence(elf.states.walkUp);
     elf.vy = -1;
+    elf.vx = 0;
     console.log(elf.states.walkUp);
   };
   upArrow.release = () => {
     elf.show(elf.states.up);
     elf.vy = 0;
+    elf.vx = 0;
   };
 
   downArrow.press = () => {
     elf.playSequence(elf.states.walkDown);
     elf.vy = 1;
+    elf.vx = 0;
     console.log(elf.states.walkDown);
   };
   downArrow.release = () => {
     elf.show(elf.states.down);
     elf.vy = 0;
+    elf.vx = 0;
   };
 
   gameLoop();
