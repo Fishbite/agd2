@@ -206,11 +206,15 @@ import { contain } from "../lib/utils.js";
 
 // first load the tileset image
 assets
-  .load(["../images/walkcycle.png", "../images/forest.png"])
+  .load([
+    "../images/walkcycle.png",
+    "../images/forest.png",
+    "../images/RobotSprite.png",
+  ])
   .then(() => setup());
 
 // variables shared between functions
-let canvas, elf, leftArrow, rightArrow, upArrow, downArrow;
+let canvas, elf, robot, leftArrow, rightArrow, upArrow, downArrow;
 
 function setup() {
   // make the canvas and stage
@@ -227,12 +231,17 @@ function setup() {
 
   // create the sprite frames array
   let elfFrames = filmstrip(assets["../images/walkcycle.png"], 64, 64);
+  let robotFrames = filmstrip(assets["../images/RobotSprite.png"], 32, 32);
 
   console.log("elfFrames", elfFrames);
+  console.log("robotFrames", robotFrames);
 
   // initiate the sprite using elfFrames
   elf = sprite(elfFrames);
   stage.putCenter(elf);
+
+  robot = sprite(robotFrames);
+  stage.putCenter(robot, -64);
 
   // create the elf's states:
   elf.states = {
@@ -246,8 +255,17 @@ function setup() {
     walkRight: [28, 35],
   };
 
+  robot.states = {
+    stop: 0,
+    right: 4,
+    up: 8,
+    wave: [0, 8],
+    walk: [9, 14],
+  };
+
   // set the elfs frame rate
   elf.fps = 12;
+  robot.fps = 18;
 
   // setup the keyboard keys
   leftArrow = keyboard(37);
@@ -259,49 +277,62 @@ function setup() {
   leftArrow.press = () => {
     // play the elf's walkLeft animation sequence
     elf.playSequence(elf.states.walkLeft);
+    robot.playSequence(robot.states.wave);
     elf.vx = -1;
     elf.vy = 0;
     console.log(elf.states.walkLeft);
   };
   leftArrow.release = () => {
     elf.show(elf.states.left);
+    robot.show(robot.states.stop);
     elf.vx = 0;
     elf.vy = 0;
   };
 
   rightArrow.press = () => {
     elf.playSequence(elf.states.walkRight);
+    robot.show(robot.states.right);
     elf.vx = 1;
     elf.vy = 0;
     console.log(elf.states.walkRight);
   };
   rightArrow.release = () => {
     elf.show(elf.states.right);
+    robot.show(robot.states.stop);
     elf.vx = 0;
   };
 
   upArrow.press = () => {
     elf.playSequence(elf.states.walkUp);
+    robot.playSequence(robot.states.walk);
     elf.vy = -1;
     elf.vx = 0;
+    robot.vy = -0.75;
     console.log(elf.states.walkUp);
   };
   upArrow.release = () => {
     elf.show(elf.states.up);
+    robot.show(robot.states.up);
     elf.vy = 0;
     elf.vx = 0;
+    robot.vy = 0;
   };
 
   downArrow.press = () => {
     elf.playSequence(elf.states.walkDown);
+
+    robot.playSequence(robot.states.walk);
     elf.vy = 1;
     elf.vx = 0;
+    robot.vy = 0.75;
     console.log(elf.states.walkDown);
   };
   downArrow.release = () => {
     elf.show(elf.states.down);
+    robot.show(robot.states.stop);
     elf.vy = 0;
     elf.vx = 0;
+    robot.vy = 0;
   };
 
   gameLoop();
@@ -313,6 +344,10 @@ function gameLoop() {
   // move the elf
   elf.x += elf.vx;
   elf.y += elf.vy;
+
+  // move the robot
+  robot.x += robot.vx;
+  robot.y += robot.vy;
 
   // keep the elf on the stage
   let edges = contain(elf, stage.localBounds);

@@ -12,7 +12,7 @@ console.log("OK! We're all set to go!");
 
 // to start we define the how many columns and rows
 // the tileset image has
-let columns = 9,
+let columns = 20,
   rows = 4;
 
 // calculate the number of frames in the tilset
