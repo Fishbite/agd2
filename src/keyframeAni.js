@@ -31,7 +31,7 @@ import { contain } from "../lib/utils.js";
         have more than one frame in a tileset.
 
         Thus, it needs to be included in the
-        importer.js file
+        importer.js file ....DONE!
 
 */
 
@@ -209,7 +209,7 @@ assets
   .load([
     "../images/walkcycle.png",
     "../images/forest.png",
-    "../images/RobotSprite.png",
+    "../images/RobotSprite3.png",
   ])
   .then(() => setup());
 
@@ -231,17 +231,17 @@ function setup() {
 
   // create the sprite frames array
   let elfFrames = filmstrip(assets["../images/walkcycle.png"], 64, 64);
-  let robotFrames = filmstrip(assets["../images/RobotSprite.png"], 32, 32);
+  let robotFrames = filmstrip(assets["../images/RobotSprite3.png"], 52, 58);
 
   console.log("elfFrames", elfFrames);
   console.log("robotFrames", robotFrames);
 
-  // initiate the sprite using elfFrames
-  elf = sprite(elfFrames);
-  stage.putCenter(elf);
-
+  // initiate the sprites using their frames array
   robot = sprite(robotFrames);
   stage.putCenter(robot, -64);
+
+  elf = sprite(elfFrames);
+  stage.putCenter(elf);
 
   // create the elf's states:
   elf.states = {
@@ -266,6 +266,11 @@ function setup() {
   // set the elfs frame rate
   elf.fps = 12;
   robot.fps = 18;
+
+  // set the layers
+  // robot.layer = 0;
+  // elf.layer = 20;
+  // console.log("robot elf", robot.layer, elf.layer);
 
   // setup the keyboard keys
   leftArrow = keyboard(37);
@@ -335,6 +340,12 @@ function setup() {
     robot.vy = 0;
   };
 
+  // stage.swapChildren(elf, robot);
+  // elf.y = robot.y;
+  console.log("robot index:", stage.children.indexOf(robot));
+  console.log("robot.y  elf.y ", robot.y, elf.y);
+  console.log("robot.height + elf.height ", robot.height + elf.height);
+
   gameLoop();
 }
 
@@ -348,6 +359,42 @@ function gameLoop() {
   // move the robot
   robot.x += robot.vx;
   robot.y += robot.vy;
+
+  // Set the depth layers of the elf and robot so that the elf
+  // appears to be able to walk around the robot
+  // i.e. in front of and behind the robot
+  if (
+    // is the robot higher on the screen than the elf &&
+    // is the index of the robot higher than the elf's?
+    robot.y < elf.y - robot.height + elf.height + 3 &&
+    stage.children.indexOf(robot) > stage.children.indexOf(elf)
+  ) {
+    // if so, swap the depth layers of each sprite
+    stage.swapChildren(elf, robot);
+  } else if (
+    // is the robot lower on the screen thn the elf &&
+    // is the index of the robot lower than the elf's?
+    robot.y > elf.y - robot.height + elf.height + 3 &&
+    stage.children.indexOf(robot) < stage.children.indexOf(elf)
+  ) {
+    // if so swap the depth layers of the sprites
+    stage.swapChildren(elf, robot);
+  }
+
+  // console.log("elf.y:", elf.y, "robot.y:", robot.y);
+
+  // if (
+  //   elf.y < robot.y &&
+  //   stage.children.indexOf(robot) > stage.children.indexOf(elf)
+  // ) {
+  //   stage.swapChildren(elf, robot);
+  //   console.log("robot index:", stage.children.indexOf(robot));
+  // } else if (
+  //   elf.y > robot.y &&
+  //   stage.children.indexOf(robot) < stage.children.indexOf(elf)
+  // ) {
+  //   stage.swapChildren(elf, robot);
+  // }
 
   // keep the elf on the stage
   let edges = contain(elf, stage.localBounds);
