@@ -267,11 +267,6 @@ function setup() {
   elf.fps = 12;
   robot.fps = 18;
 
-  // set the layers
-  // robot.layer = 0;
-  // elf.layer = 20;
-  // console.log("robot elf", robot.layer, elf.layer);
-
   // setup the keyboard keys
   leftArrow = keyboard(37);
   rightArrow = keyboard(39);
@@ -380,21 +375,6 @@ function gameLoop() {
     // if so swap the depth layers of the sprites
     stage.swapChildren(elf, robot);
   }
-
-  // console.log("elf.y:", elf.y, "robot.y:", robot.y);
-
-  // if (
-  //   elf.y < robot.y &&
-  //   stage.children.indexOf(robot) > stage.children.indexOf(elf)
-  // ) {
-  //   stage.swapChildren(elf, robot);
-  //   console.log("robot index:", stage.children.indexOf(robot));
-  // } else if (
-  //   elf.y > robot.y &&
-  //   stage.children.indexOf(robot) < stage.children.indexOf(elf)
-  // ) {
-  //   stage.swapChildren(elf, robot);
-  // }
 
   // keep the elf on the stage
   let edges = contain(elf, stage.localBounds);
