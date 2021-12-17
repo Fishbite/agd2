@@ -151,7 +151,7 @@ function gameLoop() {
   // loop through the particles array in reverse so that
   // we can safely remove the particle without throwing the loop out by one
   if (particles.length > 0) {
-    for (let i = particles.length - 1; i > 0; i--) {
+    for (let i = particles.length - 1; i >= 0; i--) {
       let particle = particles[i];
       particle.update();
     }
