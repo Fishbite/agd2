@@ -52,8 +52,8 @@ export function particleEffect(
 
     // if randomSpacing is false, space each particle evenly
     // starting with minAngle ane ending at maxAngle
-    else if (angle === undefined) {
-      angle = minAngle;
+    else {
+      if (angle === undefined) angle = minAngle;
       angles.push(angle);
       angle += spacing;
     }
@@ -69,7 +69,7 @@ export function particleEffect(
 
     // display a random frame if the particle has more than one frame
     if (particle.frames.length > 0) {
-      particle.gotoAndStop(randomInt(0, particles.frames.length - 1));
+      particle.gotoAndStop(randomInt(0, particle.frames.length - 1));
     }
 
     // set the particle's x / y position
@@ -112,7 +112,7 @@ export function particleEffect(
       particle.rotation += particle.rotationSpeed;
 
       // change the particle's alhpa
-      particle.alpa += particle.alphaSpeed;
+      particle.alpa -= particle.alphaSpeed;
 
       // remove t he particle if its alpha reaches 0
       if (particle.alpha <= 0) {
