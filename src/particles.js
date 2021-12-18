@@ -1,11 +1,23 @@
 console.log("OK! We're good to go...");
 
-import { makeCanvas, stage, render, sprite, circle } from "../lib/importer.js";
+import {
+  makeCanvas,
+  stage,
+  render,
+  sprite,
+  frames,
+  circle,
+  rectangle,
+  arc,
+} from "../lib/importer.js";
 import { assets } from "../lib/assets.js";
 import { randomInt } from "../lib/utils.js";
 import { makePointer } from "../lib/interactive.js";
 
-// loop through this array to update all the particles on each frame
+assets.load(["../images/fairy.png"]);
+
+// loop through this array to update all the particles
+// on each frame in the gameLoop()
 export let particles = [];
 
 export function particleEffect(
@@ -69,7 +81,9 @@ export function particleEffect(
 
     // display a random frame if the particle has more than one frame
     if (particle.frames.length > 0) {
-      particle.gotoAndStop(randomInt(0, particle.frames.length - 1));
+      let randomNum = randomInt(0, particle.frames.length - 1);
+      console.log(randomNum);
+      particle.gotoAndStop(randomNum);
     }
 
     // set the particle's x / y position
@@ -114,7 +128,7 @@ export function particleEffect(
       // change the particle's alhpa
       particle.alpa -= particle.alphaSpeed;
 
-      // remove t he particle if its alpha reaches 0
+      // remove the particle if its alpha reaches 0
       if (particle.alpha <= 0) {
         console.log(particle);
         remove(particle);
@@ -139,10 +153,63 @@ function setup() {
 
   pointer = makePointer(canvas, 1);
 
+  // we can even use frames as particle images
+  let fairyFrames = frames(
+    assets["../images/fairy.png"],
+    [
+      [0, 0],
+      [0, 48],
+      [0, 96],
+      [0, 144],
+    ],
+    48,
+    32
+  );
+
+  let fairy = sprite(fairyFrames);
+  stage.putCenter(fairy);
+
   pointer.press = () => {
-    particleEffect(pointer.x, pointer.y);
+    particleEffect(
+      pointer.x,
+      pointer.y,
+      // NB: the width and height params of the sprite do nothing,
+      // as this is overriden by min/max size of the particleEffect
+      // () => rectangle(1, 1, "", "goldenrod", 1),
+      // () =>
+      //   arc(
+      //     10,
+      //     "rgba(0,0,0,0)",
+      //     "goldenrod",
+      //     2,
+      //     1.57,
+      //     6.28,
+      //     "",
+      //     "",
+      //     false,
+      //     false
+      //   )
+      () => sprite(fairyFrames),
+      100, // num particles
+      0.01, // gravity
+      true, // random spacing
+      0, // min angle
+      6.28, // max angle
+      48, // min size
+      48, // max size
+      1, // min speed
+      2, // max speed
+      0.005, // min scale speed
+      0.01, // max scale speed
+      0.05, // min alpha speed
+      0.01, // max alpha speed
+      // set min & max rotation to zero for non-rotating particles
+      // set min or max to a negative value to rotate CW & ACW
+      -0.02, // min rotation speed
+      0.02 // max rotation speed
+    );
   };
-  console.log(particles);
+
   gameLoop();
 }
 
