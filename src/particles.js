@@ -9,6 +9,9 @@ import {
   circle,
   rectangle,
   arc,
+  line,
+  draggableSprites,
+  buttons,
 } from "../lib/importer.js";
 import { assets } from "../lib/assets.js";
 import { randomInt } from "../lib/utils.js";
@@ -137,7 +140,7 @@ export function particleEffect(
       }
     };
 
-    // push the aprticle into the particles array
+    // push the particle into the particles array
     particles.push(particle);
   }
 }
@@ -169,16 +172,22 @@ function setup() {
   let fairy = sprite(fairyFrames);
   stage.putCenter(fairy);
 
-  pointer.press = () => {
+  fairy.interactive = true;
+  fairy.draggable = true;
+  pointer.hitTestSprite(fairy);
+
+  let doThis = () => {
+    console.log("tapped");
     particleEffect(
       pointer.x,
       pointer.y,
       // NB: the width and height params of the sprite do nothing,
       // as this is overriden by min/max size of the particleEffect
-      // () => rectangle(1, 1, "", "goldenrod", 1),
+      // e.g. using the rectangle sprite
+      () => rectangle(1, 1, "rgba(0,0,0,0)", "goldenrod", 1),
       // () =>
       //   arc(
-      //     10,
+      //     "",
       //     "rgba(0,0,0,0)",
       //     "goldenrod",
       //     2,
@@ -188,27 +197,196 @@ function setup() {
       //     "",
       //     false,
       //     false
-      //   )
-      () => sprite(fairyFrames),
-      100, // num particles
-      0.01, // gravity
+      //   ),
+      // () =>
+      //   line(
+      //     "goldenrod",
+      //     0.25,
+      //     pointer.x - 200,
+      //     pointer.y,
+      //     pointer.x,
+      //     pointer.y
+      //   ),
+      // () => sprite(fairyFrames),
+      250, // num particles
+      0.0, // gravity
       true, // random spacing
       0, // min angle
       6.28, // max angle
-      48, // min size
-      48, // max size
+      2, // min size
+      24, // max size
       1, // min speed
       2, // max speed
       0.005, // min scale speed
       0.01, // max scale speed
-      0.05, // min alpha speed
+      0.005, // min alpha speed
       0.01, // max alpha speed
       // set min & max rotation to zero for non-rotating particles
       // set min or max to a negative value to rotate CW & ACW
-      -0.02, // min rotation speed
-      0.02 // max rotation speed
+      -0.1, // min rotation speed
+      0.1 // max rotation speed
     );
   };
+
+  pointer.press = doThis;
+
+  // pointer.press = () => {
+  //   console.log("pressed", buttons);
+  //   particleEffect(
+  //     pointer.x,
+  //     pointer.y,
+  //     // NB: the width and height params of the sprite do nothing,
+  //     // as this is overriden by min/max size of the particleEffect
+  //     // e.g. using the rectangle sprite
+  //     () => rectangle(1, 1, "rgba(0,0,0,0)", "goldenrod", 1),
+  //     // () =>
+  //     //   arc(
+  //     //     "",
+  //     //     "rgba(0,0,0,0)",
+  //     //     "goldenrod",
+  //     //     2,
+  //     //     1.57,
+  //     //     6.28,
+  //     //     "",
+  //     //     "",
+  //     //     false,
+  //     //     false
+  //     //   ),
+  //     // () =>
+  //     //   line(
+  //     //     "goldenrod",
+  //     //     0.25,
+  //     //     pointer.x - 200,
+  //     //     pointer.y,
+  //     //     pointer.x,
+  //     //     pointer.y
+  //     //   ),
+  //     // () => sprite(fairyFrames),
+  //     250, // num particles
+  //     0.0, // gravity
+  //     true, // random spacing
+  //     0, // min angle
+  //     6.28, // max angle
+  //     2, // min size
+  //     24, // max size
+  //     1, // min speed
+  //     2, // max speed
+  //     0.005, // min scale speed
+  //     0.01, // max scale speed
+  //     0.005, // min alpha speed
+  //     0.01, // max alpha speed
+  //     // set min & max rotation to zero for non-rotating particles
+  //     // set min or max to a negative value to rotate CW & ACW
+  //     -0.1, // min rotation speed
+  //     0.1 // max rotation speed
+  //   );
+  // };
+
+  fairy.press = doThis;
+  // fairy.press = () => {
+  //   console.log("tapped");
+  //   particleEffect(
+  //     pointer.x,
+  //     pointer.y,
+  //     // NB: the width and height params of the sprite do nothing,
+  //     // as this is overriden by min/max size of the particleEffect
+  //     // e.g. using the rectangle sprite
+  //     () => rectangle(1, 1, "rgba(0,0,0,0)", "goldenrod", 1),
+  //     // () =>
+  //     //   arc(
+  //     //     "",
+  //     //     "rgba(0,0,0,0)",
+  //     //     "goldenrod",
+  //     //     2,
+  //     //     1.57,
+  //     //     6.28,
+  //     //     "",
+  //     //     "",
+  //     //     false,
+  //     //     false
+  //     //   ),
+  //     // () =>
+  //     //   line(
+  //     //     "goldenrod",
+  //     //     0.25,
+  //     //     pointer.x - 200,
+  //     //     pointer.y,
+  //     //     pointer.x,
+  //     //     pointer.y
+  //     //   ),
+  //     // () => sprite(fairyFrames),
+  //     250, // num particles
+  //     0.0, // gravity
+  //     true, // random spacing
+  //     0, // min angle
+  //     6.28, // max angle
+  //     2, // min size
+  //     24, // max size
+  //     1, // min speed
+  //     2, // max speed
+  //     0.005, // min scale speed
+  //     0.01, // max scale speed
+  //     0.005, // min alpha speed
+  //     0.01, // max alpha speed
+  //     // set min & max rotation to zero for non-rotating particles
+  //     // set min or max to a negative value to rotate CW & ACW
+  //     -0.1, // min rotation speed
+  //     0.1 // max rotation speed
+  //   );
+  // };
+  fairy.tap = doThis;
+  // fairy.tap = () => {
+  //   console.log("tapped");
+  //   particleEffect(
+  //     pointer.x,
+  //     pointer.y,
+  //     // NB: the width and height params of the sprite do nothing,
+  //     // as this is overriden by min/max size of the particleEffect
+  //     // e.g. using the rectangle sprite
+  //     () => rectangle(1, 1, "rgba(0,0,0,0)", "goldenrod", 1),
+  //     // () =>
+  //     //   arc(
+  //     //     "",
+  //     //     "rgba(0,0,0,0)",
+  //     //     "goldenrod",
+  //     //     2,
+  //     //     1.57,
+  //     //     6.28,
+  //     //     "",
+  //     //     "",
+  //     //     false,
+  //     //     false
+  //     //   ),
+  //     // () =>
+  //     //   line(
+  //     //     "goldenrod",
+  //     //     0.25,
+  //     //     pointer.x - 200,
+  //     //     pointer.y,
+  //     //     pointer.x,
+  //     //     pointer.y
+  //     //   ),
+  //     // () => sprite(fairyFrames),
+  //     250, // num particles
+  //     0.0, // gravity
+  //     true, // random spacing
+  //     0, // min angle
+  //     6.28, // max angle
+  //     2, // min size
+  //     24, // max size
+  //     1, // min speed
+  //     2, // max speed
+  //     0.005, // min scale speed
+  //     0.01, // max scale speed
+  //     0.005, // min alpha speed
+  //     0.01, // max alpha speed
+  //     // set min & max rotation to zero for non-rotating particles
+  //     // set min or max to a negative value to rotate CW & ACW
+  //     -0.1, // min rotation speed
+  //     0.1 // max rotation speed
+  //   );
+  // };
+  console.log("buttons:", buttons);
 
   gameLoop();
 }
@@ -223,6 +401,17 @@ function gameLoop() {
       particle.update();
     }
   }
+
+  //Update the buttons
+  if (buttons.length > 0) {
+    canvas.style.cursor = "auto";
+    buttons.forEach((button) => {
+      button.update(pointer, canvas);
+    });
+  }
+
+  //update the pointer's drag and drop system
+  pointer.updateDragAndDrop(draggableSprites);
 
   render(canvas);
 }
