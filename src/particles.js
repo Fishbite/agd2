@@ -79,7 +79,7 @@ export function particleEffect(
 
   // make the particle
   function makeParticle(angle) {
-    // create the particle usine the supplied sprite function
+    // create the particle using the supplied sprite function
     let particle = spriteFunction();
 
     // display a random frame if the particle has more than one frame
@@ -174,10 +174,12 @@ function setup() {
 
   fairy.interactive = true;
   fairy.draggable = true;
-  pointer.hitTestSprite(fairy);
+  // pointer.hitTestSprite(fairy); // don't need this
 
+  // We've stored the particle effect in a variable so that we can
+  // simply define our sprite interactions like this:
+  // sprite.press = doThis; sprite.tap = doThis etc...
   let doThis = () => {
-    console.log("tapped");
     particleEffect(
       pointer.x,
       pointer.y,
@@ -228,7 +230,8 @@ function setup() {
     );
   };
 
-  pointer.press = doThis;
+  // enable this to create a particle burst anywhere on the canvas
+  // pointer.press = doThis;
 
   // pointer.press = () => {
   //   console.log("pressed", buttons);
@@ -283,6 +286,9 @@ function setup() {
   // };
 
   fairy.press = doThis;
+  // if .tap is enabled, the fairy is behind the particles???
+  // however if .press is enabled instead, the fairy is in front???
+
   // fairy.press = () => {
   //   console.log("tapped");
   //   particleEffect(
@@ -334,7 +340,11 @@ function setup() {
   //     0.1 // max rotation speed
   //   );
   // };
-  fairy.tap = doThis;
+
+  // fairy.tap = doThis;
+  // if .tap is enabled, the fairy is behind the particles???
+  // however if .press is enabled instead, the fairy is in front???
+
   // fairy.tap = () => {
   //   console.log("tapped");
   //   particleEffect(
