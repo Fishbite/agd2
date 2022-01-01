@@ -163,7 +163,7 @@ function setup() {
   // if left arrow is released and the right arrow is up
   // set rotation speed to zero
   leftArrow.release = () => {
-    if (!rightArrow.isDowm) {
+    if (!rightArrow.isDown) {
       tank.rotationSpeed = 0;
     }
   };
