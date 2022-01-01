@@ -1,4 +1,5 @@
 // A moving tank that moves like a real wheeled vehicle
+// and a whole host of other interactive stuff
 import { assets } from "../lib/assets.js";
 
 import {
@@ -21,7 +22,7 @@ import { contain, randomInt } from "../lib/utils.js";
 
 import { keyboard, makePointer, up } from "../lib/interactive.js";
 
-import { hit } from "../lib/collision.js";
+import { hit, rectangleCollision } from "../lib/collision.js";
 
 assets
   .load(["../fonts/puzzler.otf", "../images/button.json"])
@@ -348,8 +349,7 @@ function gameLoop() {
       return false;
     }
 
-    // check for collision with the stage boundary
-
+    // check if the bullet hits the stage boundary
     let collision = outsideBounds(bullet, stage.localBounds);
 
     // if there's a collision, display the side that the collision
@@ -390,6 +390,10 @@ function gameLoop() {
 
   // update the pointer's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
+
+  // make it so the tank can't go under the button using
+  // the rectangleCollision function
+  let buttonCollision = rectangleCollision(tank, playButton);
 
   render(canvas);
 }
