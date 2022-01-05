@@ -20,9 +20,13 @@ import {
 
 import { contain, randomInt } from "../lib/utils.js";
 
-import { keyboard, makePointer, up } from "../lib/interactive.js";
+import { keyboard, makePointer, space, up } from "../lib/interactive.js";
 
-import { hit, rectangleCollision } from "../lib/collision.js";
+import {
+  hit,
+  rectangleCollision,
+  circleRectangleCollision,
+} from "../lib/collision.js";
 
 assets
   .load(["../fonts/puzzler.otf", "../images/button.json"])
@@ -43,6 +47,11 @@ let canvas,
   actionMessage,
   playButton,
   bullets = [],
+  forwardBtn,
+  backBtn,
+  leftBtn,
+  rightBtn,
+  tankCtrls,
   // bullet = bulletSprite(),
   ball,
   score = 0,
@@ -211,12 +220,15 @@ function setup() {
   // playButton.press = () => {
   //   shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
   // };
-  // console.log(playButton.height);
+  // console.log("button height", playButton.height);
 
   // define the button's actions:
   playButton.over = () => console.log("over");
   playButton.out = () => console.log("out");
-  playButton.press = () => console.log("press");
+  playButton.press = () => {
+    // shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+    console.log("press");
+  };
   playButton.release = () => console.log("release");
   playButton.tap = () => {
     shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
@@ -253,6 +265,68 @@ function setup() {
   // we can update the msgHitTest text content
   pointer.hitTestSprite(playButton);
 
+  // Work In Progress:- *****************
+  // ****** Tank Control Buttons ****** \\
+
+  forwardBtn = rectangle(48, 48, "darkgrey", "black", 8);
+  backBtn = rectangle(48, 48, "grey", "black", 8);
+  leftBtn = rectangle(48, 48, "lightgrey", "black", 8);
+  rightBtn = rectangle(48, 48, "lightgrey", "black", 8);
+
+  forwardBtn.interactive = true;
+  backBtn.interactive = true;
+  leftBtn.interactive = true;
+  rightBtn.interactive = true;
+
+  forwardBtn.putBottom(backBtn, 0, backBtn.lineWidth * 1.5);
+  forwardBtn.putLeft(
+    leftBtn,
+    -forwardBtn.halfWidth * 0.5,
+    forwardBtn.halfHeight
+  );
+  forwardBtn.putRight(rightBtn, rightBtn.lineWidth * 1.5, rightBtn.halfHeight);
+
+  tankCtrls = group(forwardBtn, backBtn, leftBtn, rightBtn);
+
+  tankCtrls.setPosition(
+    canvas.width - (tankCtrls.width + backBtn.lineWidth),
+    canvas.height - (tankCtrls.height + backBtn.lineWidth)
+  );
+
+  pointer.hitTestSprite(forwardBtn);
+  pointer.hitTestSprite(backBtn);
+  pointer.hitTestSprite(leftBtn);
+  pointer.hitTestSprite(rightBtn);
+
+  forwardBtn.press = () => {
+    tank.moveForward = true;
+  };
+  forwardBtn.release = () => {
+    tank.moveForward = false;
+  };
+
+  backBtn.press = () => {
+    tank.moveBackwards = true;
+    console.log("press");
+  };
+  backBtn.release = () => {
+    tank.moveBackwards = false;
+  };
+
+  leftBtn.press = () => {
+    tank.rotationSpeed = -0.05;
+  };
+  leftBtn.release = () => {
+    tank.rotationSpeed = 0;
+  };
+
+  rightBtn.press = () => {
+    tank.rotationSpeed = 0.05;
+  };
+  rightBtn.release = () => {
+    tank.rotationSpeed = 0;
+  };
+
   gameLoop();
 }
 
@@ -286,10 +360,30 @@ function gameLoop() {
   tank.x += tank.vx;
   tank.y += tank.vy;
 
-  // tank.draggable = true;
+  // contain the tank within the stage boundries and
+  // set speed to zero if it collides with the edges
+  let edgesTankCollision = contain(
+    tank,
+    stage.localBounds,
+    true,
+    () => (tank.speed = 0)
+  );
 
-  // contain the tank within the stage boundries
-  let edges = contain(tank, stage.localBounds, true);
+  // make it so the tank can't go under the button using
+  // the rectangleCollision function
+  let buttonTankCollision = rectangleCollision(tank, playButton);
+  // set the tanks speed to zero if it collides with the button
+  if (buttonTankCollision) tank.speed = 0;
+  // use the circleRectangleCollision to stop the tank
+  // from going under the ball
+  let ballTankCollision = circleRectangleCollision(ball, tank);
+  if (ballTankCollision) {
+    tank.speed = 0;
+    tank.moveForward = false;
+    tank.moveBackwards = false;
+  }
+  // contain the ball within the stage boundries
+  let ballEdgeCollision = contain(ball, stage.localBounds, true);
 
   message.content = `rotation ${tank.rotation}`;
   messageX.content = `x: ${Math.floor(tank.centerX)}`;
@@ -302,6 +396,14 @@ function gameLoop() {
     msgHitTest.content = "pointer hit: playButton";
   } else if (pointer.hitTestSprite(ball)) {
     msgHitTest.content = "pointer hit: ball";
+  } else if (pointer.hitTestSprite(forwardBtn)) {
+    msgHitTest.content = "pointer hit: forwardBtn";
+  } else if (pointer.hitTestSprite(leftBtn)) {
+    msgHitTest.content = "pointer hit: leftBtn";
+  } else if (pointer.hitTestSprite(backBtn)) {
+    msgHitTest.content = "pointer hit: backBtn";
+  } else if (pointer.hitTestSprite(rightBtn)) {
+    msgHitTest.content = "pointer hit: rightBtn";
   } else msgHitTest.content = "pointer hit: nothing";
 
   // ****** Bullets ****** \\
@@ -334,14 +436,30 @@ function gameLoop() {
         ball.strokeStyle = "blue";
       }
 
-      ball.diameter *= 0.99;
-      ball.lineWidth *= 0.99;
+      ball.diameter *= 0.9;
+      ball.lineWidth *= 0.9;
 
-      if (ball.diameter < bullet.diameter * 2) {
+      if (ball.diameter < bullet.diameter * 4) {
         score += 100;
+        // remove the ball from its parent and set it as an
+        // empty object so the tank can't interact with it
         remove(ball);
+        ball = {};
+        // empty the bullet array to prevent collision errors
+        bullets = [];
 
-        msgScore.content = `score: * WIN * ${score}`;
+        stage.putCenter(msgScore, -msgScore.width);
+        msgScore.content = `****** YOU WIN! ****** ${score}`;
+        shoot = () => console.log("Game Over");
+        space.press = () => {
+          msgSide.fillStyle = "red";
+          msgSide.content = "Out of Amo!!!";
+        };
+
+        playButton.tap = () => {
+          msgSide.fillStyle = "red";
+          msgSide.content = "Out of Amo!!!";
+        };
       }
 
       remove(bullet);
@@ -390,10 +508,6 @@ function gameLoop() {
 
   // update the pointer's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
-
-  // make it so the tank can't go under the button using
-  // the rectangleCollision function
-  let buttonCollision = rectangleCollision(tank, playButton);
 
   render(canvas);
 }
