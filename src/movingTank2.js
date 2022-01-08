@@ -20,7 +20,7 @@ import {
 
 import { contain, randomInt } from "../lib/utils.js";
 
-import { keyboard, makePointer, space, up } from "../lib/interactive.js";
+import { keyboard, makePointer } from "../lib/interactive.js";
 
 import {
   hit,
@@ -52,7 +52,6 @@ let canvas,
   leftBtn,
   rightBtn,
   tankCtrls,
-  // bullet = bulletSprite(),
   ball,
   score = 0,
   pointer;
@@ -84,7 +83,7 @@ function shoot(
 
   // push the bullet into the bullet array
   bulletArray.push(bullet);
-  console.log(bulletArray);
+  // console.log(bulletArray);
 }
 
 function setup() {
@@ -226,14 +225,14 @@ function setup() {
   playButton.over = () => console.log("over");
   playButton.out = () => console.log("out");
   playButton.press = () => {
-    // shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+    shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
     console.log("press");
   };
   playButton.release = () => console.log("release");
-  playButton.tap = () => {
-    shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
-    console.log("tap");
-  };
+  // playButton.tap = () => {
+  //   shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+  //   console.log("tap");
+  // };
 
   // Add some message text:
   stateMessage = text("state:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 112);
@@ -326,6 +325,8 @@ function setup() {
   rightBtn.release = () => {
     tank.rotationSpeed = 0;
   };
+
+  console.log("pointer", pointer.touchstartHandler);
 
   gameLoop();
 }
@@ -423,48 +424,52 @@ function gameLoop() {
 
     // check if bullet hit ball
 
-    let hitBall = hit(ball, bullet, true, true, true);
-    if (hitBall) {
-      score++;
-      msgScore.content = `score: ${score}`;
-      // set the ball's fill and stroke style to a random colour
-      ball.fillStyle = colours[randomInt(0, colours.length - 1)];
-      ball.strokeStyle = colours[randomInt(0, colours.length - 1)];
+    if (ball) {
+      let hitBall = hit(ball, bullet, true, true, true);
 
-      // make sure the fill style and stroke style are different
-      if (ball.fillStyle === ball.strokeStyle) {
-        ball.strokeStyle = "blue";
+      if (hitBall) {
+        score++;
+        msgScore.content = `score: ${score}`;
+        // set the ball's fill and stroke style to a random colour
+        ball.fillStyle = colours[randomInt(0, colours.length - 1)];
+        ball.strokeStyle = colours[randomInt(0, colours.length - 1)];
+
+        // make sure the fill style and stroke style are different
+        if (ball.fillStyle === ball.strokeStyle) {
+          ball.strokeStyle = "blue";
+        }
+
+        ball.diameter *= 0.9;
+        ball.lineWidth *= 0.9;
+
+        if (ball.diameter < bullet.diameter * 4) {
+          score += 100;
+          // remove the ball from its parent and set it as an
+          // empty object so the tank can't interact with it
+          // remove(ball);
+          // ball = undefined;
+          // empty the bullet array to prevent collision errors
+          bullets = [];
+          // shoot = () => console.log("Game Over");
+
+          stage.putCenter(msgScore, -msgScore.width);
+          msgScore.content = `****** YOU WIN! ****** ${score}`;
+          // shoot = () => console.log("Game Over");
+          // space.press = () => {
+          //   msgSide.fillStyle = "red";
+          //   msgSide.content = "Out of Amo!!!";
+          // };
+
+          // playButton.tap = () => {
+          //   msgSide.fillStyle = "red";
+          //   msgSide.content = "Out of Amo!!!";
+          // };
+        }
+
+        remove(bullet);
+
+        return false;
       }
-
-      ball.diameter *= 0.9;
-      ball.lineWidth *= 0.9;
-
-      if (ball.diameter < bullet.diameter * 4) {
-        score += 100;
-        // remove the ball from its parent and set it as an
-        // empty object so the tank can't interact with it
-        remove(ball);
-        ball = {};
-        // empty the bullet array to prevent collision errors
-        bullets = [];
-
-        stage.putCenter(msgScore, -msgScore.width);
-        msgScore.content = `****** YOU WIN! ****** ${score}`;
-        shoot = () => console.log("Game Over");
-        space.press = () => {
-          msgSide.fillStyle = "red";
-          msgSide.content = "Out of Amo!!!";
-        };
-
-        playButton.tap = () => {
-          msgSide.fillStyle = "red";
-          msgSide.content = "Out of Amo!!!";
-        };
-      }
-
-      remove(bullet);
-
-      return false;
     }
 
     // check if the bullet hits the stage boundary
@@ -497,6 +502,7 @@ function gameLoop() {
       if (button.state === "over" || button.state === "down") {
         if (button.parent !== undefined) {
           canvas.style.cursor = "pointer";
+          button.update(pointer, canvas);
         }
       }
     });
