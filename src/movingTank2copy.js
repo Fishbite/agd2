@@ -326,7 +326,7 @@ function setup() {
     tank.rotationSpeed = 0;
   };
 
-  // console.log("pointer", pointer.touchstartHandler);
+  console.log("pointer", pointer.touchstartHandler);
 
   gameLoop();
 }
@@ -338,8 +338,6 @@ function gameLoop() {
   tank.rotation += tank.rotationSpeed;
 
   // if tank.moveForward is true, increase the speed
-  // console.log("tank.moveForward:", tank.moveForward);
-  // console.log("forwardBtn.release", forwardBtn.release);
   if (tank.moveForward) {
     tank.speed += 0.1;
   } else if (tank.moveBackwards) {
