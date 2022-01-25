@@ -11,7 +11,7 @@ import {
 } from "../lib/importer.js";
 
 // Function to add touch events and event handlers
-import { makePointer } from "../lib/interactive-agd.js";
+import { makePointer } from "../lib/interactiveStu.js";
 
 // variabless shared between functions
 let canvas, forBtn, tank, pointer;
@@ -26,25 +26,32 @@ function setup() {
 
   //** Tank **/
   // create the tank components
-  tank = rectangle(64, 48, "darkgrey");
+  tank = rectangle(64, 48, "red");
   // place the tank at the center of the stage sprite
   stage.putCenter(tank);
 
   //** Controls */
   // create a rectangle to use as a button
-  forBtn = rectangle(48, 32);
+  forBtn = rectangle(48, 32, "blue");
   // set its `interactive` property to true which adds it
   // to the `buttons` array so it can be updated each frame
   forBtn.interactive = true;
 
   // define the buttons `press` & `release` methods of the button
+  let pressed;
+  let released;
   forBtn.press = () => {
     tank.moveForward = true;
-    console.log("Forward");
+    pressed = Date.now();
+    console.log("touchstart fired");
+    console.log("Forward", Date.now());
   };
   forBtn.release = () => {
     tank.moveForward = false;
-    console.log("Stop");
+    console.log("touchend fired");
+    console.log("Stop", Date.now());
+    released = Date.now();
+    console.log(`forBtn was pressed for ${released - pressed}ms`);
   };
 
   // add the mouse and touch events
