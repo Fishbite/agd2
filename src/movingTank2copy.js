@@ -18,6 +18,8 @@ import {
   draggableSprites,
 } from "../lib/importer.js";
 
+import { particleEffect, particles } from "..src/particles.js";
+
 import { contain, randomInt } from "../lib/utils.js";
 
 import { keyboard, makePointer } from "../lib/interactive.js";
@@ -326,14 +328,11 @@ function setup() {
     tank.rotationSpeed = 0;
   };
 
-  console.log("pointer", pointer.touchstartHandler);
-
   gameLoop();
 }
 
 function gameLoop() {
   requestAnimationFrame(gameLoop);
-
   // use the `rotationSpeen` to set the tank's rotation
   tank.rotation += tank.rotationSpeed;
 
@@ -514,6 +513,8 @@ function gameLoop() {
 
   // update the pointer's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
+
+  // loop through all the particles
 
   render(canvas);
 }

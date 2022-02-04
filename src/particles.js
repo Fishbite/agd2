@@ -1,5 +1,3 @@
-console.log("OK! We're good to go...");
-
 import {
   makeCanvas,
   stage,

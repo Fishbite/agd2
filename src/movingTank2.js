@@ -18,7 +18,9 @@ import {
   draggableSprites,
 } from "../lib/importer.js";
 
-import { contain, randomInt } from "../lib/utils.js";
+import { particleEffect, particles } from "../lib/particleEffect.js";
+
+import { angle, contain, randomInt } from "../lib/utils.js";
 
 import { keyboard, makePointer } from "../lib/interactive.js";
 
@@ -76,7 +78,6 @@ function shoot(
     shooter.centerX - bullet.halfWidth + offsetFromCenter * Math.cos(angle);
   bullet.y =
     shooter.centerY - bullet.halfHeight + offsetFromCenter * Math.sin(angle);
-
   // set the bullets velocity
   bullet.vx = Math.cos(angle) * bulletSpeed;
   bullet.vy = Math.sin(angle) * bulletSpeed;
@@ -326,7 +327,42 @@ function setup() {
     tank.rotationSpeed = 0;
   };
 
-  // console.log("pointer", pointer.touchstartHandler);
+  /* ****** Particles ****** */
+  // We've stored the particle effect in a variable so that we can
+  // simply define our sprite interactions like this:
+  // sprite.press = doThis; sprite.tap = doThis etc...
+  console.log(angle);
+  let doThis = () => {
+    particleEffect(
+      tank.x + 16 + 36 * Math.cos(tank.rotation),
+      tank.y + 16 + 36 * Math.sin(tank.rotation),
+
+      // NB: the width and height params of the sprite do nothing,
+      // as this is overriden by min/max size of the particleEffect
+      // e.g. using the rectangle sprite
+      () => circle(1, "rgba(0,0,0,0)", "lightyellow", 1),
+
+      5, // num particles
+      0.0, // gravity
+      true, // random spacing
+      tank.rotation - 0.5, // min angle
+      tank.rotation + 0.5, // max angle
+      0.25, // min size
+      0.5, // max size
+      0, // min speed
+      0.2, // max speed
+      0.005, // min scale speed
+      0.01, // max scale speed
+      0.005, // min alpha speed
+      0.01, // max alpha speed
+      // set min & max rotation to zero for non-rotating particles
+      // set min or max to a negative value to rotate CW & ACW
+      -0, // min rotation speed
+      0 // max rotation speed
+    );
+  };
+
+  pointer.press = doThis;
 
   gameLoop();
 }
@@ -516,6 +552,15 @@ function gameLoop() {
 
   // update the pointer's drag and drop system
   pointer.updateDragAndDrop(draggableSprites);
+
+  // loop through the particles array in reverse so that
+  // we can safely remove the particle without throwing the loop out by one
+  if (particles.length > 0) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      let particle = particles[i];
+      particle.update();
+    }
+  }
 
   render(canvas);
 }
