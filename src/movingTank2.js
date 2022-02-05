@@ -15,10 +15,12 @@ import {
   button,
   buttons,
   frames,
+  particles,
+  particleEffect,
   draggableSprites,
 } from "../lib/importer.js";
 
-import { particleEffect, particles } from "../lib/particleEffect.js";
+// import { particleEffect, particles } from "../lib/particleEffect.js";
 
 import { angle, contain, randomInt } from "../lib/utils.js";
 
@@ -58,35 +60,6 @@ let canvas,
   score = 0,
   pointer;
 
-// The bullet Sprite function
-// let bulletSprite = () => circle(8, "red");
-
-// A Shoot Function
-function shoot(
-  shooter,
-  angle,
-  offsetFromCenter,
-  bulletSpeed,
-  bulletArray,
-  bulletSprite
-) {
-  // make a new sprite using the bulletSprite() function
-  let bullet = bulletSprite();
-
-  // set the bullet's start point
-  bullet.x =
-    shooter.centerX - bullet.halfWidth + offsetFromCenter * Math.cos(angle);
-  bullet.y =
-    shooter.centerY - bullet.halfHeight + offsetFromCenter * Math.sin(angle);
-  // set the bullets velocity
-  bullet.vx = Math.cos(angle) * bulletSpeed;
-  bullet.vy = Math.sin(angle) * bulletSpeed;
-
-  // push the bullet into the bullet array
-  bulletArray.push(bullet);
-  // console.log(bulletArray);
-}
-
 function setup() {
   // set up the canvas and stage
   canvas = makeCanvas(
@@ -122,6 +95,64 @@ function setup() {
   );
 
   msgScore = text("score:", "14px puzzler", "rgba(50, 50, 50, 1", 4, 146);
+
+  // The bullet Sprite function
+  // let bulletSprite = () => circle(8, "red");
+
+  // A Shoot Function
+  function shoot(
+    shooter,
+    angle,
+    offsetFromCenter,
+    bulletSpeed,
+    bulletArray,
+    bulletSprite
+  ) {
+    // make a new sprite using the bulletSprite() function
+    let bullet = bulletSprite();
+
+    // set the bullet's start point
+    bullet.x =
+      shooter.centerX - bullet.halfWidth + offsetFromCenter * Math.cos(angle);
+    bullet.y =
+      shooter.centerY - bullet.halfHeight + offsetFromCenter * Math.sin(angle);
+    // set the bullets velocity
+    bullet.vx = Math.cos(angle) * bulletSpeed;
+    bullet.vy = Math.sin(angle) * bulletSpeed;
+
+    // push the bullet into the bullet array
+    bulletArray.push(bullet);
+    // console.log(bulletArray);
+
+    // particles
+    particleEffect(
+      tank.x + 16 + 36 * Math.cos(tank.rotation),
+      tank.y + 16 + 36 * Math.sin(tank.rotation),
+
+      // NB: the width and height params of the sprite do nothing,
+      // as this is overriden by min/max size of the particleEffect
+      // e.g. using the rectangle sprite
+      () => circle(1, "rgba(255, 255, 155, 1)", "none"),
+
+      100, // num particles
+      0.0, // gravity
+      true, // random spacing
+      tank.rotation, // min angle
+      tank.rotation, // max angle
+      1, // min size
+      2, // max size
+      0.1, // min speed
+      7.5, // max speed
+      0.005, // min scale speed
+      0.01, // max scale speed
+      0.05, // min alpha speed
+      0.05, // max alpha speed
+      // set min & max rotation to zero for non-rotating particles
+      // set min or max to a negative value to rotate CW & ACW
+      -0, // min rotation speed
+      0 // max rotation speed
+    );
+  }
 
   // ****** make the tank ****** \\
   // ****** tank behaves like a real wheeled vehicle ****** \\
@@ -327,43 +358,6 @@ function setup() {
     tank.rotationSpeed = 0;
   };
 
-  /* ****** Particles ****** */
-  // We've stored the particle effect in a variable so that we can
-  // simply define our sprite interactions like this:
-  // sprite.press = doThis; sprite.tap = doThis etc...
-  console.log(angle);
-  let doThis = () => {
-    particleEffect(
-      tank.x + 16 + 36 * Math.cos(tank.rotation),
-      tank.y + 16 + 36 * Math.sin(tank.rotation),
-
-      // NB: the width and height params of the sprite do nothing,
-      // as this is overriden by min/max size of the particleEffect
-      // e.g. using the rectangle sprite
-      () => circle(1, "rgba(0,0,0,0)", "lightyellow", 1),
-
-      5, // num particles
-      0.0, // gravity
-      true, // random spacing
-      tank.rotation - 0.5, // min angle
-      tank.rotation + 0.5, // max angle
-      0.25, // min size
-      0.5, // max size
-      0, // min speed
-      0.2, // max speed
-      0.005, // min scale speed
-      0.01, // max scale speed
-      0.005, // min alpha speed
-      0.01, // max alpha speed
-      // set min & max rotation to zero for non-rotating particles
-      // set min or max to a negative value to rotate CW & ACW
-      -0, // min rotation speed
-      0 // max rotation speed
-    );
-  };
-
-  pointer.press = doThis;
-
   gameLoop();
 }
 
@@ -410,9 +404,9 @@ function gameLoop() {
 
   // make it so the tank can't go under the button using
   // the rectangleCollision function
-  let buttonTankCollision = rectangleCollision(tank, playButton);
+  // let buttonTankCollision = rectangleCollision(tank, playButton);
   // set the tanks speed to zero if it collides with the button
-  if (buttonTankCollision) tank.speed = 0;
+  // if (buttonTankCollision) tank.speed = 0;
   // use the circleRectangleCollision to stop the tank
   // from going under the ball
   let ballTankCollision = circleRectangleCollision(ball, tank);

@@ -8,6 +8,7 @@ import {
   rectangle,
   arc,
   line,
+  remove,
   draggableSprites,
   buttons,
 } from "../lib/importer.js";
@@ -127,11 +128,11 @@ export function particleEffect(
       particle.rotation += particle.rotationSpeed;
 
       // change the particle's alhpa
-      particle.alpa -= particle.alphaSpeed;
+      particle.alpha -= particle.alphaSpeed;
 
       // remove the particle if its alpha reaches 0
       if (particle.alpha <= 0) {
-        console.log(particle);
+        // console.log(particle);
         remove(particle);
 
         particles.splice(particles.indexOf(particle), 1);
