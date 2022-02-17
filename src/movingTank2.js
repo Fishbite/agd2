@@ -18,9 +18,8 @@ import {
   particles,
   particleEffect,
   draggableSprites,
+  tilingSprite,
 } from "../lib/importer.js";
-
-// import { particleEffect, particles } from "../lib/particleEffect.js";
 
 import { angle, contain, randomInt } from "../lib/utils.js";
 
@@ -33,10 +32,15 @@ import {
 } from "../lib/collision.js";
 
 assets
-  .load(["../fonts/puzzler.otf", "../images/button.json"])
+  .load([
+    "../fonts/puzzler.otf",
+    "../images/button.json",
+    "../images/tile2.png",
+  ])
   .then(() => setup());
 
-let canvas,
+let tile,
+  canvas,
   colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"],
   tank,
   tankSpeed = 0,
@@ -58,7 +62,9 @@ let canvas,
   tankCtrls,
   ball,
   score = 0,
-  pointer;
+  pointer,
+  walls,
+  finish;
 
 function setup() {
   // set up the canvas and stage
@@ -66,10 +72,70 @@ function setup() {
     window.innerWidth - 16,
     window.innerHeight - 16,
     "4px solid darkred",
-    "goldenrod"
+    "#111"
   );
   stage.width = canvas.width;
   stage.height = canvas.height;
+
+  // tile2d background
+
+  tile = tilingSprite(
+    canvas.width,
+    canvas.height,
+    assets["../images/tile2.png"]
+  );
+
+  /* ****** The walls ****** */
+  // A group for all the blocks that make the walls
+  walls = group();
+
+  // set the initial gap size between the walls
+  let gapSize = 4;
+
+  // calc the size of blocks to build the walls
+  let blockSize = canvas.height / 8;
+
+  // set the number of walls
+  let numberOfWalls = 25;
+
+  // loop to create the walls
+  for (let i = 0; i < numberOfWalls; i++) {
+    // randomly place the gap somewhere inside the wall
+    let startGapNumber = randomInt(0, 8 - gapSize);
+
+    // reduce the gap size every 5 walls
+    if (i > 0 && gapSize > 1 && i % 5 === 0) gapSize -= 1;
+
+    // create a block for the wall if its not in the range
+    // of numbers occupied by the gap
+    for (let j = 0; j < 8; j++) {
+      if (j < startGapNumber || j > startGapNumber + gapSize) {
+        let block = rectangle(blockSize, blockSize, "grey");
+        walls.addChild(block);
+
+        // space each wall 384 pixels apart
+        block.x = i * 384 + (canvas.width - blockSize);
+        block.y = j * blockSize;
+      }
+
+      // create the finish text
+      if (i === numberOfWalls - 1) {
+        finish = text(
+          "Finish",
+          "64px puzzler",
+          "red",
+          i * 384 + canvas.width * 1.5,
+          canvas.height / 2
+        );
+
+        canvas.ctx.font = "64px puzzler";
+        finish.width = canvas.ctx.measureText(finish).width;
+        console.log(finish.content, finish.width);
+
+        walls.addChild(finish);
+      }
+    }
+  }
 
   // make a pointer
   pointer = makePointer(canvas, 1);
@@ -99,7 +165,7 @@ function setup() {
   // The bullet Sprite function
   // let bulletSprite = () => circle(8, "red");
 
-  // A Shoot Function
+  // A Shoot Function utilising particle effect
   function shoot(
     shooter,
     angle,
@@ -364,6 +430,15 @@ function setup() {
 function gameLoop() {
   requestAnimationFrame(gameLoop);
 
+  // move the floor  and walls while the finish text has
+  // not reached the center of the canvas
+  // console.log(finish.gx);
+
+  if (finish.gx > canvas.width * 0.5 - finish.width * 0.25) {
+    tile.tileX -= 2;
+    walls.x -= 2;
+  }
+
   // use the `rotationSpeen` to set the tank's rotation
   tank.rotation += tank.rotationSpeed;
 
@@ -478,7 +553,7 @@ function gameLoop() {
           score += 100;
           // remove the ball from its parent and set it as an
           // empty object so the tank can't interact with it
-          // remove(ball);
+          remove(ball);
           // ball = undefined;
           // empty the bullet array to prevent collision errors
           bullets = [];
