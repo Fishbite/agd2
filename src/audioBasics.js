@@ -5,6 +5,10 @@ let actx = new AudioContext();
 // create a variable to hold the sound we are going to load
 let soundBuffer;
 
+// if we define a panNode outside of our keyDownHandler
+// we can manipulate the panNode.pan.value in our loop
+let panNode = actx.createStereoPanner();
+
 /* ****** load the sound ******/
 //a. Use an XMLHttpRequest object to load the sound
 let xhr = new XMLHttpRequest();
@@ -71,12 +75,11 @@ function keyDownHandler(event) {
       if (soundBuffer) {
         let soundNode = actx.createBufferSource();
         soundNode.buffer = soundBuffer;
-        console.log(soundBuffer);
 
         // create a volume node
         let volumeNode = actx.createGain();
-        // create a pan node
-        let panNode = actx.createStereoPanner();
+        // create a pan node. Done outside of this handler!!!
+        // let panNode = actx.createStereoPanner();
 
         // connect the Nodes in a chain:
         soundNode.connect(volumeNode);
@@ -84,11 +87,12 @@ function keyDownHandler(event) {
         panNode.connect(actx.destination);
 
         // set the volumeNode level:
-        volumeNode.gain.value = 0.5;
+        volumeNode.gain.value = 0.75;
 
         // set the panNode value:
         // -1 = full left speaker, 1 = full right speaker
-        panNode.pan.value = -0.75;
+        panNode.pan.value = -1;
+        // while (panNode.pan.value < 1) panNode.pan.value += 0.001;
 
         // do you wanna loop the sound?
         soundNode.loop = false;
@@ -97,6 +101,15 @@ function keyDownHandler(event) {
         soundNode.start(actx.currentTime);
       }
   }
+}
+
+loop();
+
+function loop() {
+  requestAnimationFrame(loop);
+
+  // pan the sound from left (-1) to right (+1)
+  panNode.pan.value += 0.01;
 }
 /* ■Tip A lternatively, you can make a sound play immediately by supplying the start method with a value of 0,
 this way: start(0). That’s because any value that’s less than the currentTime will cause the audio context to

@@ -36,6 +36,7 @@ assets
     "../fonts/puzzler.otf",
     "../images/button.json",
     "../images/tile2.png",
+    "../audio/test.wav",
   ])
   .then(() => setup());
 
@@ -77,8 +78,9 @@ function setup() {
   stage.width = canvas.width;
   stage.height = canvas.height;
 
-  // tile2d background
+  let shootSound = assets["../audio/test.wav"];
 
+  // tile2d background
   tile = tilingSprite(
     canvas.width,
     canvas.height,
@@ -261,6 +263,7 @@ function setup() {
 
   space.press = () => {
     shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
+    shootSound.play();
   };
 
   // setup the rotation speed for the left arrow
@@ -323,6 +326,7 @@ function setup() {
   playButton.over = () => console.log("over");
   playButton.out = () => console.log("out");
   playButton.press = () => {
+    shootSound.play();
     shoot(tank, tank.rotation, 32, 7, bullets, () => circle(8, "red"));
     console.log("press");
   };
