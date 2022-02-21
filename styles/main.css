@@ -7,3 +7,8 @@ body {
   background-color: rgb(28, 26, 26);
   color: white;
 }
+
+instructions,
+p {
+  padding: 0.5rem;
+}

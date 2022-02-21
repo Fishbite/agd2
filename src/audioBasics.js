@@ -7,6 +7,7 @@ let soundBuffer;
 
 // if we define a panNode outside of our keyDownHandler
 // we can manipulate the panNode.pan.value in our loop
+// e.g. make the sound move from left to right speaker
 let panNode = actx.createStereoPanner();
 
 /* ****** load the sound ******/
@@ -24,7 +25,7 @@ xhr.open("GET", "../audio/test.wav", true);
 //needs to be `arraybuffer`
 xhr.responseType = "arraybuffer";
 
-// load the sound into the programm
+// d. load the sound into the programm
 xhr.send();
 
 //e. Create a `loadHandler` that runs when the sound has been loaded
@@ -78,7 +79,8 @@ function keyDownHandler(event) {
 
         // create a volume node
         let volumeNode = actx.createGain();
-        // create a pan node. Done outside of this handler!!!
+        // create a pan node. Done outside of this handler so
+        // that we can manipulate the panNode.value outside this handler
         // let panNode = actx.createStereoPanner();
 
         // connect the Nodes in a chain:
@@ -92,7 +94,6 @@ function keyDownHandler(event) {
         // set the panNode value:
         // -1 = full left speaker, 1 = full right speaker
         panNode.pan.value = -1;
-        // while (panNode.pan.value < 1) panNode.pan.value += 0.001;
 
         // do you wanna loop the sound?
         soundNode.loop = false;
