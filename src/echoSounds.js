@@ -95,7 +95,7 @@ function keydownHandler(event) {
         // Note: The API runtime (the browser) will
         // take care of removing  sounds with a
         // volume less than zero, so, we don't
-        // have to manually remove sounds that cann't
+        // have to manually remove sounds that can't
         // be heard any more.
       }
       break;
@@ -112,7 +112,7 @@ function keydownHandler(event) {
         let feedbackNode = actx.createGain();
         feedbackNode.gain.value = 0.75;
 
-        // filter out and frequencies above 1000Hz
+        // filter out and frequencies above 3500Hz
         // using a biquad filter
         let filterNode = actx.createBiquadFilter();
         filterNode.frequency.value = 3500;
@@ -162,6 +162,17 @@ function keydownHandler(event) {
         delayNode.connect(actx.destination);
         // start the sound now
         soundNode.start(actx.currentTime);
+
+        // Example how to convert the left  and right
+        // channel data into arrays:
+
+        let left = soundNode.buffer.getChannelData(0);
+        console.log("left channel data:", left);
+        let right = soundNode.buffer.getChannelData(1);
+        console.log("right channel data:", right);
+        // getChannelData() returns a high resolution
+        // array called a Float32Array, which are also
+        // used in WebGL graphics rendering.
       }
   }
 }

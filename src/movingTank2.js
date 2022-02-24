@@ -37,6 +37,8 @@ assets
     "../images/button.json",
     "../images/tile2.png",
     "../audio/test.wav",
+    "../audio/Cm.wav",
+    "../audio/music.wav",
   ])
   .then(() => setup());
 
@@ -45,6 +47,7 @@ let tile,
   colours = ["Gold", "Purple", "Crimson", "DarkSeaGreen"],
   tank,
   tankSpeed = 0,
+  pingSound,
   message,
   messageX,
   messageY,
@@ -52,6 +55,7 @@ let tile,
   msgTankSpeed,
   msgHitTest,
   msgScore,
+  music,
   stateMessage,
   actionMessage,
   playButton,
@@ -78,7 +82,21 @@ function setup() {
   stage.width = canvas.width;
   stage.height = canvas.height;
 
+  // Set up the sounds
+  music = assets["../audio/music.wav"];
+  music.loop = true;
+  music.setReverb(8, 2, true);
+  music.volume = 2;
+  music.playbackRate = 1.5;
+  music.play();
+
   let shootSound = assets["../audio/test.wav"];
+  shootSound.volume = 0.15;
+  console.log(shootSound.volume);
+
+  pingSound = assets["../audio/Cm.wav"];
+  pingSound.volume = 8;
+  pingSound.setReverb(2, 2, false);
 
   // tile2d background
   tile = tilingSprite(
@@ -441,7 +459,7 @@ function gameLoop() {
   if (finish.gx > canvas.width * 0.5 - finish.width * 0.25) {
     tile.tileX -= 2;
     walls.x -= 2;
-  }
+  } else music.stop();
 
   // use the `rotationSpeen` to set the tank's rotation
   tank.rotation += tank.rotationSpeed;
@@ -539,6 +557,7 @@ function gameLoop() {
       let hitBall = hit(ball, bullet, true, true, true);
 
       if (hitBall) {
+        pingSound.play();
         score++;
         msgScore.content = `score: ${score}`;
         // set the ball's fill and stroke style to a random colour
