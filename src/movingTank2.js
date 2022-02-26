@@ -554,10 +554,10 @@ function gameLoop() {
     // check if bullet hit ball
 
     if (ball) {
-      let hitBall = hit(ball, bullet, true, true, true);
+      let hitBall = hit(ball, bullet, true, true, true, () => pingSound.play());
 
       if (hitBall) {
-        pingSound.play();
+        // pingSound.play();
         score++;
         msgScore.content = `score: ${score}`;
         // set the ball's fill and stroke style to a random colour
@@ -572,7 +572,7 @@ function gameLoop() {
         ball.diameter *= 0.9;
         ball.lineWidth *= 0.9;
 
-        if (ball.diameter < bullet.diameter * 4) {
+        if (ball.diameter < bullet.diameter / 2) {
           score += 100;
           // remove the ball from its parent and set it as an
           // empty object so the tank can't interact with it

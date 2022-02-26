@@ -8,6 +8,10 @@ body {
   color: white;
 }
 
+h4 {
+  padding: 1rem 0rem 0rem 1rem;
+}
+
 instructions,
 p {
   padding: 0.5rem;
