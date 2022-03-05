@@ -24,8 +24,6 @@ function playNote(frequency, decay = 1, type = "sine") {
   oscillator.start(actx.currentTime);
 }
 
-playNote(260.63, 1, "sine");
-
 // Note: linearRampToValueAtTime lets you change any node value
 // over a period of time in a linear way.
 // Use exponentialRampToValueAtTime to change gradually and
@@ -40,36 +38,45 @@ let one = keyboard(49),
   four = keyboard(52),
   five = keyboard(53),
   six = keyboard(54),
-  seven = keyboard(55);
+  seven = keyboard(55),
+  eight = keyboard(56),
+  nine = keyboard(57),
+  zero = keyboard(48);
 
 // Define some musical note values
-let C = 261.63,
-  D = 293.66,
-  E = 329.63,
-  F = 349.23,
-  G = 392,
-  A = 440,
-  B = 493.88;
+let C4 = 261.63,
+  D4 = 293.66,
+  E4 = 329.63,
+  F4 = 349.23,
+  G4 = 392,
+  A4 = 440,
+  B4 = 493.88,
+  C5 = 523.25,
+  D5 = 587.33,
+  E5 = 659.25;
 
 // Set the press method for each key
 one.press = () => {
-  playNote(C, 2);
+  playNote(C4, 2);
 };
 two.press = () => {
-  playNote(D, 2);
+  playNote(D4, 2);
 };
 three.press = () => {
-  playNote(E, 2);
+  playNote(E4, 2);
 };
 four.press = () => {
-  playNote(F, 2);
+  playNote(F4, 2);
 };
 five.press = () => {
-  playNote(G, 2);
+  playNote(G4, 2);
 };
 six.press = () => {
-  playNote(A, 2);
+  playNote(A4, 2);
 };
 seven.press = () => {
-  playNote(B, 2);
+  playNote(B4, 2);
 };
+eight.press = () => playNote(C5, 4);
+nine.press = () => playNote(D5, 2);
+zero.press = () => playNote(E5, 2);

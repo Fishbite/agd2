@@ -594,29 +594,308 @@ function note() {
   );
 }
 
-function musicNotes() {
+function cgfeRiff() {
   let t = 0,
     i = 0.25,
-    type = "sawtooth",
-    bend = 0,
-    rev = false;
-  for (let r = 0; r <= 3; r++) {
-    soundEffect(261.63, 0, 1, type, 1, 0, t, bend); //C1
-    soundEffect(392, 0, 1, type, 1, 0, (t += i)); //G1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); //C1
-    soundEffect(349.23, 0, 1, type, 1, 0, (t += i), bend, rev); //F1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); //C1
-    soundEffect(329.63, 0, 1, type, 1, 0, (t += i), bend, rev); // E1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); // C1
-    soundEffect(349.23, 0, 1, type, 1, 0, (t += i), bend, rev); //F1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); // C1
-    soundEffect(392, 0, 1, type, 1, 0, (t += i), bend, rev); //G1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); //C1
-    soundEffect(349.23, 0, 1, type, 1, 0, (t += i), bend, rev); //F1
-    soundEffect(261.63, 0, 1, type, 1, 0, (t += i), bend, rev); // C1
-    soundEffect(329.63, 0, 1, type, 1, 0, (t += i), bend, rev); // E1}
-    t += 0.75;
+    type = ["sine", "triangle", "square", "sawtooth"],
+    bend = 10,
+    rev = false,
+    rand = 0,
+    diss = 0,
+    echo = [0.125, 0.75, 2000], //echo array: [delay, feedback, filter]
+    reverb = undefined; // [1, 1, false]; //reverb array: [duration, decay, reverse?]
+
+  let j = 0;
+  for (let n = 0; n <= 8; n++) {
+    if (j === type.length) j = 0;
+    console.log(j);
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      t,
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+      //   console.log(type)
+    ); //C1
+    soundEffect(
+      392,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //G1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //C1
+    soundEffect(
+      349.23,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //F1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //C1
+    soundEffect(
+      329.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); // E1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); // C1
+    soundEffect(
+      349.23,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //F1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); // C1
+    soundEffect(
+      392,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //G1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //C1
+    soundEffect(
+      349.23,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); //F1
+    soundEffect(
+      261.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); // C1
+    soundEffect(
+      329.63,
+      0,
+      1,
+      type[j],
+      1,
+      0,
+      (t += i),
+      bend,
+      rev,
+      rand,
+      diss,
+      echo,
+      reverb
+    ); // E1}
+    t += i * 3;
+    j++;
   }
+  t = 0;
+}
+
+// Kick Drum from scratch
+// Oscillator frequency set at 150Hz
+// A useful variable!
+let now = actx.currentTime;
+
+// Create the nodes
+// let kickOsc = actx.createOscillator();
+// let kickGain = actx.createGain();
+// Set the oscillator frequency
+// kickOsc.frequency.value = 150;
+
+// connect the nodes
+// kickOsc.connect(kickGain);
+// kickGain.connect(actx.destination);
+
+// set the start volume
+// kickGain.gain.setValueAtTime(1, now);
+
+// Ramp the volume down over 1/2 sec
+// Note: We don't have this ramp in the sound function
+// kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+// Now we can rapidly drop the oscillator frequency
+// kickOsc.frequency.setValueAtTime(150, now);
+// kickOsc.frequency.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+// Start and stop the oscillator
+// kickOsc.start(now);
+// kickOsc.stop(now + 0.5);
+
+// Now! Because we can't restart an oscilator once it has been stopped
+// we need to wrap the code in a simple object
+class Kick {
+  constructor(actx) {
+    this.actx = actx;
+  }
+  setup() {
+    this.osc = this.actx.createOscillator();
+    this.gain = this.actx.createGain();
+    this.osc.connect(this.gain);
+    this.gain.connect(this.actx.destination);
+  }
+  play(time) {
+    this.setup();
+
+    this.osc.frequency.setValueAtTime(150, time);
+    this.gain.gain.setValueAtTime(1, time);
+
+    this.osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+    this.gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+    console.log("Playing");
+
+    this.osc.start(time);
+
+    this.osc.stop(time + 0.5);
+    console.log("Stopped");
+  }
+}
+
+// Now we can program repeated playing of the kick drum:
+let kick = new Kick(actx);
+kick.play(actx.currentTime);
+kick.play(actx.currentTime + 0.5);
+kick.play(actx.currentTime + 1);
+kick.play(now + 1.5);
+kick.play(now + 2);
+kick.play(now + 2.5);
+
+function music() {
+  cgfeRiff();
 }
 import { impulseResponse } from "../lib/sound.js";
 import { keyboard } from "../lib/interactive.js";
@@ -629,7 +908,8 @@ let one = keyboard(49),
   five = keyboard(53),
   six = keyboard(54),
   seven = keyboard(55),
-  eight = keyboard(56);
+  eight = keyboard(56),
+  nine = keyboard(57);
 
 // define the key's press method
 one.press = () => explosionSound();
@@ -639,4 +919,12 @@ four.press = () => grittyAlarm();
 five.press = () => softAlarm();
 six.press = () => shootSoundMod();
 seven.press = () => note();
-eight.press = () => musicNotes();
+eight.press = () => music();
+nine.press = () => {
+  let kick = new Kick(actx);
+  kick.play(now);
+  kick.play(now + 0.5);
+  kick.play(now + 1);
+  kick.play(now + 1.5);
+  kick.play(now + 2);
+};
