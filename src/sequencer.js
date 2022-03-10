@@ -223,7 +223,7 @@ function playSample(audioCtx, audioBuffer, time) {
 // the 2 async functions in a promise pattern to perform
 // further actions when this file is loaded and buffered
 async function setupSample() {
-  const filepath = "../audio/dtmf.mp3";
+  const filepath = "../audio/test.wav";
 
   // here we await the async/promise that is 'getFile'
   // To be able to use the 'this' keyword we need to be
