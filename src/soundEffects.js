@@ -3,6 +3,11 @@ console.log("Wicked Noises");
 // Don't forget to create the context!
 let actx = new AudioContext();
 
+// A dynamics compressor node, used to control
+// the load on the output so that we don't
+// overload the output with multiple voices
+let compressor = createDynamicsCompressor();
+
 // ****** Function to Create Sound Effects ****** \\
 // function soundEffect(
 //   frequencyValue,
@@ -223,8 +228,6 @@ let actx = new AudioContext();
 //     oscillatorNode.start(actx.currentTime + wait);
 //   }
 // }
-
-// crappy Expolsion
 
 function soundEffect(
   frequencyValue,
@@ -597,7 +600,7 @@ function note() {
 function cgfeRiff() {
   let t = 0,
     i = 0.25,
-    type = ["sine", "triangle", "square", "sawtooth"],
+    type = ["sine", "triangle"],
     bend = 10,
     rev = false,
     rand = 0,
@@ -631,7 +634,7 @@ function cgfeRiff() {
       1,
       type[j],
       1,
-      0,
+      1,
       (t += i),
       bend,
       rev,
@@ -646,7 +649,7 @@ function cgfeRiff() {
       1,
       type[j],
       1,
-      0,
+      1,
       (t += i),
       bend,
       rev,
@@ -830,6 +833,7 @@ function cgfeRiff() {
 // Oscillator frequency set at 150Hz
 // A useful variable!
 let now = actx.currentTime;
+console.log("now", now);
 
 // Create the nodes
 // let kickOsc = actx.createOscillator();
@@ -876,23 +880,25 @@ class Kick {
 
     this.osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
     this.gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
-    console.log("Playing");
+    // console.log("Playing");
 
     this.osc.start(time);
 
     this.osc.stop(time + 0.5);
-    console.log("Stopped");
+    // console.log("Stopped");
   }
 }
 
 // Now we can program repeated playing of the kick drum:
-let kick = new Kick(actx);
-kick.play(actx.currentTime);
-kick.play(actx.currentTime + 0.5);
-kick.play(actx.currentTime + 1);
-kick.play(now + 1.5);
-kick.play(now + 2);
-kick.play(now + 2.5);
+// uncomment below to play
+// let kick = new Kick(actx);
+// console.log(actx.currentTime);
+// kick.play(actx.currentTime + 0.25);
+// kick.play(actx.currentTime + 0.5);
+// kick.play(actx.currentTime + 1);
+// kick.play(now + 1.5);
+// kick.play(now + 2);
+// kick.play(now + 2.5);
 
 function music() {
   cgfeRiff();
@@ -922,9 +928,10 @@ seven.press = () => note();
 eight.press = () => music();
 nine.press = () => {
   let kick = new Kick(actx);
+  let now = actx.currentTime;
   kick.play(now);
-  kick.play(now + 0.5);
-  kick.play(now + 1);
-  kick.play(now + 1.5);
-  kick.play(now + 2);
+  // kick.play(now + 0.5);
+  // kick.play(now + 1);
+  // kick.play(now + 1.5);
+  // kick.play(now + 2);
 };
