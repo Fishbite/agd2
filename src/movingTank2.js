@@ -29,6 +29,7 @@ import {
   hit,
   rectangleCollision,
   circleRectangleCollision,
+  hitTestRectangle,
 } from "../lib/collision.js";
 
 assets
@@ -68,6 +69,7 @@ let tile,
   ball,
   score = 0,
   pointer,
+  block,
   walls,
   finish;
 
@@ -156,6 +158,8 @@ function setup() {
       }
     }
   }
+
+  // console.log(walls.children);
 
   // make a pointer
   pointer = makePointer(canvas, 1);
@@ -535,6 +539,22 @@ function gameLoop() {
   } else if (pointer.hitTestSprite(rightBtn)) {
     msgHitTest.content = "pointer hit: rightBtn";
   } else msgHitTest.content = "pointer hit: nothing";
+
+  // ****** Collision with walls ****** \\
+  let tankVsWalls = walls.children.some((block) => {
+    return hitTestRectangle(tank, block, true);
+  });
+
+  if (tankVsWalls) {
+    console.log("hit");
+    tank.speed = 0;
+    tank.x -= 2;
+    // tankSpeed.speed = 0;
+    // tank.moveForward = false;
+  }
+  // let fairyVsBlock = blocks.children.some(block => {
+  //   return hitTestRectangle(fairy, block, true);
+  //   });
 
   // ****** Bullets ****** \\
 

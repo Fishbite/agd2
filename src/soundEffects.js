@@ -6,7 +6,7 @@ let actx = new AudioContext();
 // A dynamics compressor node, used to control
 // the load on the output so that we don't
 // overload the output with multiple voices
-let compressor = createDynamicsCompressor();
+let compressor = actx.createDynamicsCompressor();
 
 // ****** Function to Create Sound Effects ****** \\
 // function soundEffect(
@@ -585,7 +585,7 @@ function note() {
     0.5, //attack
     1, //decay
     "sine", //waveform
-    1, //Volume
+    0.1, //Volume
     0, //pan
     0, //wait before playing
     25, //frequency bend amount
@@ -598,8 +598,8 @@ function note() {
 }
 
 function cgfeRiff() {
-  let t = 0,
-    i = 0.25,
+  let t = 0, // The `wait` value of the `soundEffect()`
+    i = 0.25, // time between notes i.e. the beat
     type = ["sine", "triangle"],
     bend = 10,
     rev = false,
@@ -610,45 +610,46 @@ function cgfeRiff() {
 
   let j = 0;
   for (let n = 0; n <= 8; n++) {
+    console.log(n);
     if (j === type.length) j = 0;
-    console.log(j);
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
-      t,
+      t, // play the sound now
       bend,
       rev,
       rand,
       diss,
       echo,
-      reverb
-      //   console.log(type)
+      reverb,
+      console.log("C1")
     ); //C1
     soundEffect(
       392,
       0,
       1,
       type[j],
+      0.1,
       1,
-      1,
-      (t += i),
+      (t += i), // increment the `wait` time to play the next sound
       bend,
       rev,
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("G1")
     ); //G1
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       1,
       (t += i),
       bend,
@@ -656,14 +657,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("C1")
     ); //C1
     soundEffect(
       349.23,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -671,14 +673,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("F1")
     ); //F1
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -686,14 +689,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("C1")
     ); //C1
     soundEffect(
       329.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -701,14 +705,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("E1")
     ); // E1
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -716,14 +721,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("C1")
     ); // C1
     soundEffect(
       349.23,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -731,14 +737,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("F1")
     ); //F1
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -746,14 +753,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("C1")
     ); // C1
     soundEffect(
       392,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -761,14 +769,15 @@ function cgfeRiff() {
       rand,
       diss,
       echo,
-      reverb
+      reverb,
+      console.log("G1")
     ); //G1
     soundEffect(
       261.63,
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -783,7 +792,7 @@ function cgfeRiff() {
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -798,7 +807,7 @@ function cgfeRiff() {
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -813,7 +822,7 @@ function cgfeRiff() {
       0,
       1,
       type[j],
-      1,
+      0.1,
       0,
       (t += i),
       bend,
@@ -876,11 +885,12 @@ class Kick {
     this.setup();
 
     this.osc.frequency.setValueAtTime(150, time);
-    this.gain.gain.setValueAtTime(1, time);
+    this.gain.gain.setValueAtTime(0.2, time);
 
     this.osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
     this.gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
     // console.log("Playing");
+    // this.gain.gain.linearRampToValueAtTime(0, time + 0.05);
 
     this.osc.start(time);
 
@@ -930,8 +940,8 @@ nine.press = () => {
   let kick = new Kick(actx);
   let now = actx.currentTime;
   kick.play(now);
-  // kick.play(now + 0.5);
-  // kick.play(now + 1);
-  // kick.play(now + 1.5);
+  kick.play(now + 0.5);
+  kick.play(now + 1);
+  kick.play(now + 1.5);
   // kick.play(now + 2);
 };
